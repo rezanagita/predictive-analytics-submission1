@@ -63,7 +63,7 @@ Upaya dalam mencapai tujuan proyek, dengan mengimplementasikan solusi sebagai be
 
 ## Data Understanding
 ### Karakteristik Dataset
-Dataset yang digunakan pada proyek ini : 
+Dataset yang digunakan pada proyek ini diambil dari kaggle: 
 [Health Insurance](https://www.kaggle.com/datasets/denywisnu/health-insurance-dataset/data).
 Dataset ini terdiri dari 1338 baris data dan 7 fitur, yang mencakup informasi demografis, gaya hidup, serta nilai biaya asuransi yang harus dibayarkan. Berikut penjelasan setiap variabel:
 
@@ -76,4 +76,52 @@ Dataset ini terdiri dari 1338 baris data dan 7 fitur, yang mencakup informasi de
 | Smoker | Status merokok dari individu, terdiri dari yes dan no. Ini adalah fitur penting yang sangat memengaruhi premi asuransi. |
 | Region | Lokasi tempat tinggal pemegang polis, terdiri dari empat wilayah: southeast, southwest, northeast, dan northwest. |
 | Charges | Total biaya asuransi yang harus dibayarkan oleh pemegang polis. Ini adalah variabel target (label) dalam proyek ini. |
+
+### Statistik Deskriptif
+
+- **Age**:
+  - Rata-rata: 39 tahun
+  - Minimum: 18 tahun
+  - Maksimum: 64 tahun
+- **BMI**:
+  - Rata-rata: 30 kg
+  - Minimum: 15 kg
+  - Maksimum: 53 kg
+- **Children**:
+  - Rata-rata: 1 anak
+  - Minimum: 0 anak
+  - Maksimum: 5 anak
+- **Charges**:
+  - Rata-rata: 13.279 USD
+  - Minimum: 1.121 USD
+  - Maksimum: 63.770 USD
+
+### Distribusi Data
+1. **Charges**:
+   - Distribusi charges menunjukkan skewed ke kanan (positively skewed), mengartikan charges rendah < 20.000 memiliki frekuensi jauh lebih tinggi mencapai > 200 dibanding charges dengan nilai > 20.000
+   - Mayoritas orang membayar biaya asuransi dalam kisaran rendah hingga menengah (sekitar 0–20.000), tapi ada beberapa yang membayar sangat tinggi (> 40.000).
+  
+3. **age**: 
+   - semakin tua usia seseorang, semakin tinggi charges yang dibayarkan.
+   - Ada orang muda dengan biaya tinggi, tapi sedikit jumlahnya (outlier). 
+
+4. **BMI**:
+   - Terdapat sebaran biaya yang tinggi untuk individu dengan BMI tinggi, tapi itu juga tidak konsisten.
+     
+5. **Children**:
+   - Visualisasi distribusi children menunjukkan tidak terlalu memengaruhi charges secara langsung.
+   - Distribusi charges relatif menyebar pada setiap nilai children (0 hingga 5).
+   - Ini menyiratkan bahwa jumlah tanggungan anak mungkin bukan faktor utama dalam menentukan biaya asuransi, atau efeknya kecil.
+     
+7. **sex**:
+   - Distribusi jumlah male dan female tampak seimbang sekitar 650 untuk female dan > 650 untuk male 
+
+8. **smoker**:
+   - Total kategori yang tidak merokok ( >1000 ) berbenading jauh dengan yang merokok(hanya sekitar  200)
+     
+9. **region** empat wilayah utama dengan distribusi sebagai berikut:
+   - Southeast: 350 nasabah
+   - Southwest: 340 nasabah
+   - Nortwest : 340 nasabah
+   - Northeast: 340 nasabah
 
