@@ -150,58 +150,61 @@ Dataset ini terdiri dari 1338 baris data dan 7 fitur, yang mencakup informasi de
 
 ## Modeling
 ### Algoritma Regresi yang digunakan dalam proyek ini
-1. Split dataset menjadi data train dan test dengan perbandingan 80:20
-   Jumlah data:  1190
-   Jumlah data latih:  952
-   Jumlah data test:  238
-2. Melatih model dengan 3 algoritma
+tahapan pertama sebelum masuk untuk melatih model yaitu melakukan **split dataset** menjadi data latih(80%) dan data uji(20%), pemilihan algoritma dilakukan untuk membandingkan performa antara model dasar(baseline) dan model kompleks yang mampu menanganani hubungan non linear.
+   Jumlah data:  1337
+   Jumlah data latih:  1069
+   Jumlah data test:  268
    
-      a. **Linear Regresion** (sebagai baseline)
-         - memiliki performa yang cukup baik (R²: 0.559498), tetapi kalah dari GBR. Ini menunjukkan bahwa hubungan antara fitur (usia, BMI, status merokok, jumlah tanggungan) dan biaya premi kemungkinan tidak sepenuhnya linier.
+1. Melatih model dengan 3 algoritma
    
-      b. **Random Forest Regressor**
+      a. **Linear Regresion** (sebagai baseline) : model ini dapat menangani hubungan linear antara fitur dan target. dalam konteks proyek ini biaya premi diprediksi sebagai kombinasi linear dari variabel age,bmi,smoker,children,region,sex. kelebihan model ini cepat namun kurang mampu menangkap pola kompleks/ non linear antar fitur.
+         - memiliki performa yang cukup baik (R²: 0.814516), tetapi kalah dari GBR. Ini menunjukkan bahwa hubungan antara fitur (usia, BMI, status merokok, jumlah tanggungan) dan biaya premi kemungkinan tidak sepenuhnya linier.
    
-      | Parameter           | Nilai  | Deskripsi                                                     |
-      | ------------------- | ------ | ------------------------------------------------------------- |
-      | `random_state`      | 42     | Penetapan seed agar hasil dapat direproduksi.                 |
-      | `n_estimators`      | 200    | Jumlah pohon (trees) dalam hutan.                             |
-      | `max_depth`         | 10     | Kedalaman maksimum tiap pohon. Membantu mencegah overfitting. |
-      | `min_samples_split` | 10     | Minimum jumlah sampel untuk memisahkan node.                  |
-      | `min_samples_leaf`  | 2      | Minimum jumlah sampel di node daun.                           |
-      | `max_features`      | 'sqrt' | Jumlah maksimum fitur yang dipertimbangkan saat membagi node. |
-      | `bootstrap`         | True   | Menggunakan bootstrap sampling untuk membangun tiap pohon.    |
-
-      c. **Gradient Boosting Regressor**
+      b. **Random Forest Regressor** : algoritma ini ensemble menggunakan banyak pohon keputusan, setiap pohon akan dilatih dalam sampel acak (bootstrap) lalu melakukan prediksi dengan hasilnya dirata-rata untuk mengurangi varians tanpa meningkatkan bias. Salah satu model yang mampu menangani hubungan non-linier dan outlier. Alasan menggunakan model ini karena,
+   - Dapat menangani dataset dengan distribusi data yang tidak normal
+   - menangkap interaksi antar fitru dengan baik
    
-| Parameter           | Nilai  | Deskripsi                                                             |
-| ------------------- | ------ | ----------------------------------------------------------------------|
-| `n_estimators`      | 300    | Jumlah pohon dalam boosting stages.                                           |
-| `learning_rate`     | 0.03   | Kontribusi tiap pohon terhadap prediksi akhir. Semakin kecil, semakin stabil. |
-| `max_depth`         | 4      | Kedalaman maksimum pohon individual.                                          |
-| `min_samples_split` | 10     | Minimum jumlah sampel untuk memisahkan node.                                  |
-| `min_samples_leaf`  | 3      | Minimum jumlah sampel di node daun.                                           |
-| `subsample`         | 0.8    | Persentase data yang digunakan untuk tiap pohon. Cegah overfitting.           |
-| `max_features`      | 'sqrt' | Jumlah maksimum fitur yang digunakan untuk split.                             |
-| `random_state`      | 42     | Seed agar hasil bisa direproduksi.                                            |
+| Parameter           | Nilai  | Justifikasi                                                           |
+| ------------------- | ------ | ----------------------------------------------------------------------------------- |
+| `random_state`      | 42     | Agar hasil model dapat direproduksi.                                                |
+| `n_estimators`      | 200    | Semakin banyak pohon, semakin stabil prediksi, dengan biaya komputasi lebih tinggi. |
+| `max_depth`         | 10     | Menghindari overfitting dengan membatasi kedalaman pohon.                           |
+| `min_samples_split` | 10     | Menghindari pemecahan node pada jumlah sampel kecil.                                |
+| `min_samples_leaf`  | 2      | Menjaga agar daun pohon tidak terlalu kecil.                                        |
+| `max_features`      | 'sqrt' | Mengurangi korelasi antar pohon dengan memilih subset acak fitur saat split.        |
+| `bootstrap`         | True   | Menggunakan teknik bootstrap sampling untuk keragaman pohon.                        |
 
-### Hasil evaluasi model 
-![evaluasi dari 3 model](https://github.com/user-attachments/assets/fcba755a-7a41-470f-a186-e9a2fb3677d0)
 
-Model Random Forest Regression dan Gradient Boosting Regression memiliki selisih yang sangat kecil,pada proyek ini saya menggunakan model Gradient Boosting Regression alasannya:
-
-- MAE (terkecil): 0.339 → paling sedikit kesalahan prediksi rata-rata.
-
-- MSE dan R² sangat kompetitif dengan Random Forest (hanya selisih kecil).
-3. Hyperparameter Tuning dengan Grid Search pada model Gradient Boosting Regression memperoleh 
-**Best Parameters GBR: {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 100, 'subsample': 1.0}
-Best R² GBR: 0.6528779522578873** dan hasil evaluasi akhir 
-**R² Test: 0.5922835600328693
-MAE Test: 0.34408043755403495
-MSE Test: 0.407566556286526**
-
-ini menunjukkan peningkatan pada R² menjadi lebih tinggi (0.592) dibanding dengan model latih GBR pertama R² (0.572)
+   c. **Gradient Boosting Regressor**: model yang dikenal iteratif karena setiap pohon baru dibuat untuk memperbaiki kesalahan dari model sebelumnya, sehingga model akhir merupakan gabungan dari banyak pohon lemah yang fokus pada prediksi salah. alasan menggunakan model ini karena,
+   - Dapat emnangani data kompleks dan non linear
+   - Menggunakan learning rate dan dpth untuk menghindari overfitting
+      
+   
+| Parameter           | Nilai  | Justifikasi                                                                      |
+| ------------------- | ------ | -------------------------------------------------------------------------------- |
+| `n_estimators`      | 300    | Lebih banyak pohon untuk memperbaiki kesalahan secara bertahap.                  |
+| `learning_rate`     | 0.03   | Nilai kecil agar pembelajaran lebih stabil dan mencegah overfitting.             |
+| `max_depth`         | 4      | Pohon yang tidak terlalu dalam untuk menjaga generalisasi.                       |
+| `min_samples_split` | 10     | Kontrol jumlah minimum sampel sebelum node dipecah.                              |
+| `min_samples_leaf`  | 3      | Ukuran minimum leaf node.                                                        |
+| `subsample`         | 0.8    | Hanya sebagian data yang digunakan di setiap iterasi untuk mencegah overfitting. |
+| `max_features`      | 'sqrt' | Membatasi jumlah fitur yang dipertimbangkan saat split.                          |
+| `random_state`      | 42     | Untuk replikasi eksperimen.                                                      |
+---
   
 ## Evaluation
+
+Model Random Forest Regression dan Gradient Boosting Regression memiliki selisih yang sangat kecil,pada proyek ini saya menggunakan model **Gradient Boosting Regression** alasannya:
+
+- MAE (terkecil): 0.213 → paling sedikit kesalahan prediksi rata-rata.
+
+- MSE dan R² sangat kompetitif dengan Random Forest (hanya selisih kecil).
+  
+3. Hyperparameter Tuning dengan Grid Search dilakukan untuk model Gradient Boosting Regression memperoleh 
+**Best Parameters GBR: {'learning_rate': 0.05, 'max_depth': 3, 'n_estimators': 100, 'subsample': 1.0}
+Best R² GBR: 0.8181370195383204** best param ini digunakan untuk melanjutkan testng ke data test
+
+
 | Metrik                                     | Penjelasan                                                                                                                  |
 | ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
 | **MAE (Mean Absolute Error)**              | Mengukur rata-rata kesalahan absolut antara nilai prediksi dan nilai aktual. Semakin kecil MAE, semakin baik akurasi model. |
@@ -210,10 +213,10 @@ ini menunjukkan peningkatan pada R² menjadi lebih tinggi (0.592) dibanding deng
 
 | Model                                            | MAE    | MSE    | R² Score  |
 | ------------------------------------------------ | ------ | ------ | --------- |
-| **Linear Regression**                            | 0.3652 | 0.4403 | 0.5595    |
-| **Random Forest Regressor**                      | 0.3466 | 0.4248 | 0.5751    |
-| **Gradient Boosting Regressor** (sebelum tuning) | 0.3394 | 0.4269 | 0.5729    |
-| **Gradient Boosting Regressor** (setelah tuning) |*0.3440*|*0.4075*| **0.5922**|
+| **Linear Regression**                            | 0.2418	| 0.1624	|  0.8145   | 
+| **Random Forest Regressor**                      | 0.2167 |0.1535  |	0.8246   |
+| **Gradient Boosting Regressor** (sebelum tuning) |0.2136	| 0.1565	|  0.8211   |
+| **Gradient Boosting Regressor** (setelah tuning) |*0.2131*|*0.1442*| **0.8352**|
 
 ## Conclution
 - Penentuan pembayaran charges ini dapat tinggi seiring dengan usia dan dan status perokok(aktif).
@@ -230,4 +233,4 @@ Pelatihan pertama dengan ketiga model masih belum menghasilkan tingkat evaluasi 
 Model yang telah dilatih pada data historis mampu mempelajari pola hubungan antara karakteristik pengguna dan biaya premi. Dengan memasukkan data individu seperti usia, BMI, jumlah anak, status merokok, dan wilayah, model dapat memprediksi besarnya premi secara otomatis dan personal.
 
 ## Saran pengembangan
-Melakukan analisis penilaian resiko lebih lanjut dengan menambahkan fitur yang relavan seperti riwayat kesehatan ataupun gaya hidup, sehingga dapat memberikan model belajar dari data yang lebih banyak dan dapat meningkatkan akurasi jauh lebih baik 
+Melakukan analisis penilaian resiko lebih lanjut dengan menambahkan fitur yang relavan seperti riwayat kesehatan ataupun gaya hidup, sehingga dapat memberikan model belajar dari data yang lebih banyak dan dapat meningkatkan akurasi jauh lebih baik
